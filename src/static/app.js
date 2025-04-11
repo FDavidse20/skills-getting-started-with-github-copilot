@@ -84,3 +84,36 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize app
   fetchActivities();
 });
+
+function loadActivities() {
+  fetch("/activities")
+    .then((response) => response.json())
+    .then((data) => {
+      const activitiesList = document.getElementById("activities-list");
+      activitiesList.innerHTML = ""; // Clear existing content
+
+      Object.entries(data).forEach(([name, details]) => {
+        const activityCard = document.createElement("div");
+        activityCard.className = "activity-card";
+
+        activityCard.innerHTML = `
+          <h4>${name}</h4>
+          <p><strong>Description:</strong> ${details.description}</p>
+          <p><strong>Schedule:</strong> ${details.schedule}</p>
+          <p><strong>Max Participants:</strong> ${details.max_participants}</p>
+          <div class="participants">
+            <h5>Participants:</h5>
+            <ul>
+              ${details.participants.map((participant) => `<li>${participant}</li>`).join("")}
+            </ul>
+          </div>
+        `;
+
+        activitiesList.appendChild(activityCard);
+      });
+    })
+    .catch((error) => {
+      console.error("Error loading activities:", error);
+    });
+
+}
